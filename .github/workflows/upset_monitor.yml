@@ -1,0 +1,48 @@
+name: March Madness Upset Monitor
+
+on:
+  schedule:
+    # Runs every 5 minutes during March Madness game hours (6pm–midnight UTC = 2pm–8pm ET)
+    - cron: "*/5 18-23 * 3-4 *"
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: "Send a test SMS to verify Twilio is working"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  check-upsets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Cache alerted games
+        uses: actions/cache@v4
+        with:
+          path: alerted_games.json
+          key: alerted-games-${{ github.run_id }}
+          restore-keys: |
+            alerted-games-
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run upset checker
+        env:
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+          TWILIO_FROM: ${{ secrets.TWILIO_FROM }}
+          TWILIO_TO: ${{ secrets.TWILIO_TO }}
+        run: python check_upsets.py ${{ inputs.test_mode == 'true' && '--test' || '' }}
