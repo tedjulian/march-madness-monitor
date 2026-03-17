@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>March Madness Upset Alerts — SMS Opt-In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #F4501E;
+      --navy: #0B1A2E;
+      --cream: #F5F0E8;
+      --mid: #C8C0B0;
+      --dark: #07111E;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 2rem 2.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark svg { width: 18px; height: 18px; fill: white; }
+
+    .logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+    }
+
+    /* ── HERO ── */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 12vw, 7rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+    }
+
+    h1 span { color: var(--orange); }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--mid);
+      max-width: 420px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 16px;
+      padding: 2rem 2rem 1.75rem;
+      width: 100%;
+      max-width: 440px;
+      text-align: left;
+    }
+
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+
+    .card-sub {
+      font-size: 0.82rem;
+      color: var(--mid);
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input[type="tel"], input[type="text"] {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.25); }
+    input:focus { border-color: var(--orange); }
+
+    .consent-box {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      accent-color: var(--orange);
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .consent-text {
+      font-size: 0.78rem;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    .consent-text strong { color: var(--cream); font-weight: 500; }
+
+    button {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button:hover { opacity: 0.88; }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── SUCCESS ── */
+    .success {
+      display: none;
+      text-align: center;
+      padding: 1.5rem 0 0.5rem;
+    }
+
+    .success-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(244, 80, 30, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .success-icon svg { width: 24px; height: 24px; stroke: var(--orange); fill: none; stroke-width: 2.5; }
+
+    .success h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+
+    .success p { font-size: 0.85rem; color: var(--mid); }
+
+    /* ── WHAT YOU GET ── */
+    .features {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 440px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .feature-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .feature-label {
+      font-size: 0.72rem;
+      color: var(--mid);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.2);
+      line-height: 1.8;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    footer a { color: rgba(255,255,255,0.35); text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      header { padding: 1.5rem 1.5rem 0; }
+      .card { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <span class="logo-text">Upset Alert</span>
+  </header>
+
+  <main>
+    <p class="eyebrow">March Madness SMS Alerts</p>
+    <h1>Don't miss<br/>the <span>upset</span></h1>
+    <p class="subtitle">Get a text the moment a higher seed is getting blown out at halftime. Never miss a bracket-buster.</p>
+
+    <div class="card">
+      <div id="form-wrap">
+        <div class="card-title">Sign up for alerts</div>
+        <p class="card-sub">US phone numbers only. Standard message rates apply.</p>
+
+        <label for="name">Your name</label>
+        <input type="text" id="name" placeholder="Pat Riley" autocomplete="name" />
+
+        <label for="phone">Mobile number</label>
+        <input type="tel" id="phone" placeholder="+1 (555) 000-0000" autocomplete="tel" />
+
+        <div class="consent-box">
+          <input type="checkbox" id="consent" />
+          <p class="consent-text">
+            I agree to receive recurring automated <strong>SMS alerts</strong> about March Madness halftime upsets from Upset Alert. Message frequency varies. Message &amp; data rates may apply. Reply <strong>STOP</strong> to unsubscribe at any time. Reply <strong>HELP</strong> for help.
+          </p>
+        </div>
+
+        <button id="submit-btn" disabled onclick="handleSubmit()">Send me alerts</button>
+      </div>
+
+      <div class="success" id="success-wrap">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>You're in!</h2>
+        <p>Watch for a confirmation text shortly.<br/>Reply STOP anytime to unsubscribe.</p>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-num">10+</div>
+        <div class="feature-label">Point lead triggers alert</div>
+      </div>
+      <div class="feature">
+        <div class="feature-num">HT</div>
+        <div class="feature-label">Halftime check only</div>
+      </div>
+      <div class="feature">
+        <div class="feature-num">0</div>
+        <div class="feature-label">Spam, ever</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    By opting in you consent to receive SMS alerts. Reply STOP to cancel, HELP for support.<br/>
+    Message frequency varies by tournament schedule. Standard messaging rates may apply.<br/>
+    <a href="mailto:your@email.com">Contact</a> &nbsp;|&nbsp; This service is unaffiliated with the NCAA.
+  </footer>
+
+</div>
+
+<script>
+  const checkbox = document.getElementById('consent');
+  const btn = document.getElementById('submit-btn');
+  const phoneInput = document.getElementById('phone');
+
+  checkbox.addEventListener('change', () => {
+    btn.disabled = !checkbox.checked;
+  });
+
+  function handleSubmit() {
+    const name = document.getElementById('name').value.trim();
+    const phone = phoneInput.value.trim();
+    if (!name || !phone) {
+      alert('Please enter your name and phone number.');
+      return;
+    }
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('success-wrap').style.display = 'block';
+  }
+</script>
+</body>
+</html>
